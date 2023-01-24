@@ -5,6 +5,7 @@ set -e
 UID_HOST=$1
 GID_HOST=$2
 VM_DISK_SIZE_MB=$3
+ARCH=$4
 
 echo_blue() {
     local font_blue="\033[94m"
@@ -35,7 +36,11 @@ mount -t auto ${LOOPDEVICE} /os/mnt/
 cp -a /os/${DISTR}.dir/. /os/mnt/
 
 echo_blue "[Setup extlinux]"
-extlinux --install /os/mnt/boot/
+if [ "$ARCH" = "amd" ]; then
+    extlinux --install /os/mnt/boot/
+else
+    syslinux --install /os/mnt/boot/
+fi
 cp /os/${DISTR}/syslinux.cfg /os/mnt/boot/syslinux.cfg
 rm /os/mnt/.dockerenv
 

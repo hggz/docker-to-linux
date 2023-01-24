@@ -38,6 +38,11 @@ For example for a 3GB disk:
 make debian VM_DISK_SIZE_MB=3072  # or ubuntu, or alpine
 ```
 
+alternate arch
+```
+make debian ARCH=arm  # or amd. amd by default
+```
+
 Check out `Makefile` for more details or read my article on <a href="https://iximiuz.com/en/posts/from-docker-container-to-bootable-linux-disk-image/">iximiuz.com</a>.
 
 ## Features

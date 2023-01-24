@@ -5,6 +5,7 @@ COL_END="\033[0m"
 UID=$(shell id -u)
 GID=$(shell id -g)
 VM_DISK_SIZE_MB?=1024
+ARCH?=amd
 
 REPO=docker-to-linux
 
@@ -19,6 +20,7 @@ alpine: alpine.img
 
 %.tar:
 	@echo ${COL_GRN}"[Dump $* directory structure to tar archive]"${COL_END}
+	cp $*/${ARCH}.Dockerfile $*/Dockerfile
 	docker build -f $*/Dockerfile -t ${REPO}/$* .
 	docker export -o $*.tar `docker run -d ${REPO}/$* /bin/true`
 
@@ -35,12 +37,13 @@ alpine: alpine.img
 		-e DISTR=$* \
 		--privileged \
 		--cap-add SYS_ADMIN \
-		${REPO}/builder bash /os/create_image.sh ${UID} ${GID} ${VM_DISK_SIZE_MB}
+		${REPO}/builder bash /os/create_image.sh ${UID} ${GID} ${VM_DISK_SIZE_MB} ${ARCH}
 
 .PHONY:
 builder:
 	@echo ${COL_GRN}"[Ensure builder is ready]"${COL_END}
 	@if [ "`docker images -q ${REPO}/builder`" = '' ]; then\
+		cp ${ARCH}.Dockerfile Dockerfile; \
 		docker build -f Dockerfile -t ${REPO}/builder .;\
 	fi
 
@@ -54,6 +57,7 @@ builder-interactive:
 .PHONY:
 clean: clean-docker-procs clean-docker-images
 	@echo ${COL_GRN}"[Remove leftovers]"${COL_END}
+	rm -rf Dockerfile debian/Dockerfile
 	rm -rf mnt debian.* alpine.* ubuntu.*
 
 .PHONY:
