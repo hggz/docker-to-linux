@@ -39,7 +39,8 @@ echo_blue "[Setup extlinux]"
 if [ "$ARCH" = "amd" ]; then
     extlinux --install /os/mnt/boot/
 else
-    syslinux --install /os/mnt/boot/
+    # forget this. we want to access the boot record of the prebuilt image and cp that to the below dd command...figure that out.
+    extlinux --install /os/mnt/boot/
 fi
 cp /os/${DISTR}/syslinux.cfg /os/mnt/boot/syslinux.cfg
 rm /os/mnt/.dockerenv

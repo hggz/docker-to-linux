@@ -4,3 +4,5 @@ linux.*
 alpine.*
 debian.*
 ubuntu.*
+*.iso
+*.img

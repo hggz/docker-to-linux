@@ -18,21 +18,24 @@ ubuntu: ubuntu.img
 .PHONY:
 alpine: alpine.img
 
+.PHONY:
+manjaro: manjaro.img
+
 %.tar:
 	@echo ${COL_GRN}"[Dump $* directory structure to tar archive]"${COL_END}
 	cp $*/${ARCH}.Dockerfile $*/Dockerfile
-	docker build -f $*/Dockerfile -t ${REPO}/$* .
-	docker export -o $*.tar `docker run -d ${REPO}/$* /bin/true`
+	docker build --platform linux/amd64 -f $*/Dockerfile -t ${REPO}/$* .
+	docker export -o $*.tar `docker run --privileged -d ${REPO}/$* /bin/true`
 
 %.dir: %.tar
 	@echo ${COL_GRN}"[Extract $* tar archive]"${COL_END}
-	docker run -it \
+	docker run -it --privileged \
 		-v `pwd`:/os:rw \
-		${REPO}/builder bash -c 'mkdir -p /os/$*.dir && tar -C /os/$*.dir --numeric-owner -xf /os/$*.tar'
+		${REPO}/builder bash -c 'mkdir -p /os/$*.dir && tar --exclude="etc/ca-certificates/extracted/cadir" -C /os/$*.dir --numeric-owner -xf /os/$*.tar'
 
 %.img: builder %.dir
 	@echo ${COL_GRN}"[Create $* disk image]"${COL_END}
-	docker run -it \
+	docker run -it --privileged \
 		-v `pwd`:/os:rw \
 		-e DISTR=$* \
 		--privileged \
@@ -49,7 +52,7 @@ builder:
 
 .PHONY:
 builder-interactive:
-	docker run -it \
+	docker run --privileged -it \
 		-v `pwd`:/os:rw \
 		--cap-add SYS_ADMIN \
 		${REPO}/builder bash
@@ -57,8 +60,8 @@ builder-interactive:
 .PHONY:
 clean: clean-docker-procs clean-docker-images
 	@echo ${COL_GRN}"[Remove leftovers]"${COL_END}
-	rm -rf Dockerfile debian/Dockerfile
-	rm -rf mnt debian.* alpine.* ubuntu.*
+	rm -rf Dockerfile debian/Dockerfile manjaro/Dockerfile
+	rm -rf mnt debian.* alpine.* ubuntu.* manjaro.*
 
 .PHONY:
 clean-docker-procs:
