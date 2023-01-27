@@ -24,7 +24,7 @@ manjaro: manjaro.img
 %.tar:
 	@echo ${COL_GRN}"[Dump $* directory structure to tar archive]"${COL_END}
 	cp $*/${ARCH}.Dockerfile $*/Dockerfile
-	docker build --platform linux/amd64 -f $*/Dockerfile -t ${REPO}/$* .
+	docker build --platform linux/${ARCH}64 -f $*/Dockerfile -t ${REPO}/$* .
 	docker export -o $*.tar `docker run --privileged -d ${REPO}/$* /bin/true`
 
 %.dir: %.tar
@@ -60,7 +60,7 @@ builder-interactive:
 .PHONY:
 clean: clean-docker-procs clean-docker-images
 	@echo ${COL_GRN}"[Remove leftovers]"${COL_END}
-	rm -rf Dockerfile debian/Dockerfile manjaro/Dockerfile
+	rm -rf Dockerfile debian/Dockerfile manjaro/Dockerfile manjaro_builder/Dockerfile
 	rm -rf mnt debian.* alpine.* ubuntu.* manjaro.*
 
 .PHONY:
