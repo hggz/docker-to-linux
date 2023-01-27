@@ -36,6 +36,7 @@ Approach should be:
 - create your 'install scripts' on docker and validate there, testing the gui and running the same 'docker run commands' as a script on the base vm's when testing. 
     - even consider caching the package cache from docker images to install directly on the base vm image
     - NOTE: docker is setup currently to generate amd64 images you can also test your package order on...consider testing it on there first and migrating the same deps to the arm one since generating the working arm images on docker doesnt work yet
+- Setting up your 'run' scripts as Docker run commands against this redundant /container  <-> vm flow, allows you to bring your environment everywhere whether only in a container or as a vm, creating ephemeral environments
 
 
 ## Dev Environment Considerations
