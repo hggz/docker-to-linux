@@ -15,7 +15,7 @@ RUN echo "root:root" | chpasswd
 
 # Baseline usable system 
 
-# Desktop
+# Desktop setup
 # XFCE
 RUN pacman --noconfirm -Syyu xfce4 xfce4-goodies xfce4-terminal network-manager-applet xfce4-notifyd xfce4-whiskermenu-plugin tumbler engrampa manjaro-xfce-settings manjaro-settings-manager
 
@@ -37,7 +37,7 @@ RUN pacman --noconfirm -Syyu xfce4 xfce4-goodies xfce4-terminal network-manager-
 #panel-position = bottom \
 #indicators = ~host;~spacer;~clock;~spacer;~language;~session;~a11y;~power" >> /etc/lightdm/lightdm-gtk-greeter.conf
 
-# add user
+# Add primary user
 RUN useradd -mG lp,network,power,sys,wheel hggz
 RUN echo "hggz:hggz" | chpasswd
 
@@ -47,13 +47,39 @@ RUN echo "hggz:hggz" | chpasswd
 RUN pacman --noconfirm -Syyu dbus xorg-apps
 RUN pacman --noconfirm -Syyu which vim
 RUN pacman --noconfirm -Syyu firefox
-#vnc - TODO
+###### Base Environment Apps #####
+## Note: use these setup instructions scripts for your base vm image
+####### Host Packages #######
+# qemu/kvm
+# virtual machine manager
+# barrier
+# no machine
+# docker
+# vim
+# tmux
+###### Personal Desktop Env ######
+# no machine
+# docker
+# vim
+# tmux
+# swift
+# ruby
+# python
+# lua
+# bitwarden
+# pgadmin
+# postman
+# rubymine
+# visual studio code
+# chromium
+# ebuild
+# steam
+
+# Desktop Viewing Packages launch
+#Vnc - TODO
 #RUN pacman --noconfirm -Syyu firefox x11vnc xorg-server-xvfb xorg-xauth
 #RUN echo "exec firefox" > ~/.xinitrc && chmod +x ~/.xinitrc
 #CMD ["/usr/sbin/x11vnc", "-create", "-forever"]
 # X11
 CMD ["startxfce4"]
 #RUN /bin/sh -c Configfile="~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml" && echo "#! /bin/bash\nxdpyinfo | grep -q -i COMPOSITE || {\n  echo 'x11docker/xfce: X extension COMPOSITE is missing.\nWindow manager compositing will not work.\nIf you run x11docker with option --nxagent,\nyou might want to add option --composite.' >&2\n  [ -e $Configfile ] || {\n    mkdir -p $(dirname $Configfile)\n    echo '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<channel name=\"xfwm4\" version=\"1.0\">\n\n  <property name=\"general\" type=\"empty\">\n    <property name=\"use_compositing\" type=\"bool\" value=\"false\"/>\n  </property>\n</channel>\n' > $Configfile\n  }\n}\nstartxfce4\n" > /usr/local/bin/start && chmod +x /usr/local/bin/start
-
-# Base Environment Apps
-# TODO
