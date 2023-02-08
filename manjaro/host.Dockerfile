@@ -45,36 +45,37 @@ RUN echo "hggz:hggz" | chpasswd
 # pmisc xdg-utils need to be installed but are already
 # x11-xserver-utils x11-utils needed but went for xorg-apps
 RUN pacman --noconfirm -Syyu dbus xorg-apps
-RUN pacman --noconfirm -Syyu which vim
 RUN pacman --noconfirm -Syyu firefox
 ###### Base Environment Apps #####
+RUN pacman --noconfirm -Syyu base-devel git git-lfs
 ## Note: use these setup instructions scripts for your base vm image
 ####### Host Packages #######
-# qemu/kvm
-# virtual machine manager
+# qemu/kvm virtual machine manager
+# remove iptables if it exists (if it asks) so I added '--ask 4'. All ask bitmaps are here: 
+RUN pacman --noconfirm -Syyu --needed virt-manager qemu-desktop libvirt edk2-ovmf dnsmasq iptables-nft --ask 4
+# set the service. Enable it in docker, but start it on a running system...comment out the start on the system setup scripts for an already running machine
+RUN sudo systemctl enable libvirtd.service; #sudo systemctl start libvirtd.service
+# add user to libvirt group to use the system-level vms (qemu://system. USER MUST BE SAME AS ABOVE
+RUN sudo usermod -a -G libvirt hggz
+# TODO - prepare Virtio driver https://wiki.manjaro.org/index.php/Virt-manager
+# install guest additions
+# samba
+# looking glass
 # barrier
 # no machine
 # docker
-# vim
-# tmux
-###### Personal Desktop Env ######
-# no machine
-# docker
-# vim
-# tmux
-# swift
-# ruby
-# python
-# lua
-# bitwarden
-# pgadmin
-# postman
-# rubymine
-# visual studio code
-# chromium
-# ebuild
-# steam
+RUN sudo pacman --noconfirm -Syyu docker
+# set the service. Enable it in docker, but start it on a running system...comment out the start on the system setup scripts for an already running machine
+RUN sudo systemctl enable docker.service; #sudo systemctl start docker.service;
+# run without root (same user above)
+RUN sudo usermod -aG docker hggz
+# docker compose
+RUN sudo pacman --noconfirm -Syyu docker-compose
 
+# vim zsh tmux
+RUN sudo pacman --noconfirm -Syyu vim tmux zsh
+# TODO - configs
+# wireguard
 # Desktop Viewing Packages launch
 #Vnc - TODO
 #RUN pacman --noconfirm -Syyu firefox x11vnc xorg-server-xvfb xorg-xauth
